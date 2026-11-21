@@ -4,7 +4,7 @@ import { Screen } from './Layout';
 export function Trophies() {
   const { content, progress: p } = useGame();
   return (
-    <Screen title="Шкаф с кубками" back="#/">
+    <Screen title="Шкаф с кубками" back="#/" help="trophies">
       <div class="player">
         <div>
           <b>{p.rank ?? 'Без звания'}</b>

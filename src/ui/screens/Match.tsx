@@ -6,6 +6,7 @@ import {
 } from '../../engine/match';
 import { newEvent, type AnswerEvent, type FlagEvent, type MatchEndEvent } from '../../engine/events';
 import { pickBullit, pickFinal, pickFriendly, pickQuestions } from '../../engine/selection';
+import { CoachBubble, useFirstUnseen } from '../CoachBubble';
 import { navigate } from '../router';
 import { useGame, type Game } from '../useGame';
 import { LEVEL_SQUAD, Screen } from './Layout';
@@ -90,6 +91,11 @@ export function Match(props: {
     setState(next);
     setFb(f);
   };
+  const training = mode === 'training';
+  const over = !!state?.over;
+  const coachId = useFirstUnseen(!fb ? [] : training
+    ? [fb.outcome === 'correct' ? 'training_correct' : 'training_wrong', over ? 'training_end' : null]
+    : [fb.outcome === 'left' ? 'first_left' : null, fb.item.isBullit ? 'first_bullit' : 'first_timer']);
   const resolveRef = useRef(resolve);
   resolveRef.current = resolve;
 
@@ -114,7 +120,7 @@ export function Match(props: {
   }, []);
 
   if (!valid) return <Screen title="Не найдено" back="#/" />;
-  const backTo = props.topicId ? `#/t/${props.topicId}` : `#/s/${props.subjectId}`;
+  const backTo = training ? '#/' : props.topicId ? `#/t/${props.topicId}` : `#/s/${props.subjectId}`;
   if (locked) {
     return <Screen title="Закрыто" back={backTo}><p class="msg">Сначала победи соперника полегче.</p></Screen>;
   }
@@ -132,6 +138,7 @@ export function Match(props: {
   const frac = item && !fb ? Math.max(0, 1 - elapsed / item.timerSec) : 0;
 
   const next = () => {
+    if (state.over && training) { navigate('/'); return; }
     if (state.over) { navigate(`/result/${init.matchId}`); return; }
     shownAt.current = Date.now();
     ref.current = { state, fb: null };
@@ -146,7 +153,7 @@ export function Match(props: {
   };
 
   return (
-    <Screen title={opp} back={backTo}>
+    <Screen title={opp} back={backTo} help="match">
       <section class="board" aria-label="Табло">
         <div class="teams"><span>{PLAYER_TEAM}</span><span>{opp}</span></div>
         <div class="score" data-testid="score">{state.goalsFor} : {state.goalsAgainst}</div>
@@ -184,6 +191,7 @@ export function Match(props: {
           {fb.outcome === 'left' && <p>Ушёл со льда.</p>}
           {fb.item.isBullit && fb.outcome !== 'correct' && <p>Буллит не засчитан, но гол не пропущен.</p>}
           <p class="why">{item.question.why}</p>
+          <CoachBubble hintId={coachId} onClose={() => { if (coachId === 'training_end') navigate('/'); }} />
           <button class="big" onClick={next}>Дальше</button>
           <button class="flag" onClick={flag} disabled={fb.flagged}>{fb.flagged ? 'Отмечено' : 'тут ошибка'}</button>
         </div>

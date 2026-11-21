@@ -1,13 +1,18 @@
 import { useGame } from '../useGame';
+import { CoachBubble, useFirstUnseen } from '../CoachBubble';
 import { Screen } from './Layout';
 
 export function Subject({ subjectId }: { subjectId: string }) {
   const { content, progress } = useGame();
   const s = content.subjects.find((x) => x.id === subjectId);
+  const anyTarnished = !!s && s.topics.some((t) => progress.topics[t.id]?.tarnished);
+  const finalUp = !!s && progress.subjects[s.id].finalUnlocked;
+  const coach = useFirstUnseen([anyTarnished ? 'first_tarnished' : null, finalUp ? 'first_final' : null]);
   if (!s) return <Screen title="Не найдено" back="#/" />;
   const sp = progress.subjects[s.id];
   return (
-    <Screen title={s.title} back="#/">
+    <Screen title={s.title} back="#/" help="subject">
+      <CoachBubble hintId={coach} />
       {sp.finalUnlocked && (
         <a class="big" href={`#/play/final/${s.id}`}>Финал</a>
       )}

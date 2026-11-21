@@ -1,13 +1,15 @@
 import type { ComponentChildren } from 'preact';
 import { APP_NAME } from '../../config';
+import { HelpButton } from '../HelpButton';
+import type { ScreenId } from '../hints';
 
-export function Screen(props: { title?: string; back?: string; children?: ComponentChildren }) {
+export function Screen(props: { title?: string; back?: string; help?: ScreenId; children?: ComponentChildren }) {
   return (
     <main class="screen">
       <header class="top">
         {props.back ? <a class="back" href={props.back} aria-label="Назад">‹</a> : <span class="back-gap" />}
         <h1 class="ttl">{props.title ?? APP_NAME}</h1>
-        <a class="help" href="#/rules" aria-label="Правила">?</a>
+        {props.help ? <HelpButton screen={props.help} /> : <span class="back-gap" />}
       </header>
       {props.children}
     </main>

@@ -1,4 +1,5 @@
 import type { Level } from '../../content/types';
+import { CoachBubble } from '../CoachBubble';
 import { useGame } from '../useGame';
 import { LEVEL_NAME, Screen } from './Layout';
 
@@ -9,7 +10,8 @@ export function Topic({ topicId }: { topicId: string }) {
   const tp = progress.topics[topicId];
   if (!subject || !topic || !tp) return <Screen title="Не найдено" back="#/" />;
   return (
-    <Screen title={topic.title} back={`#/s/${subject.id}`}>
+    <Screen title={topic.title} back={`#/s/${subject.id}`} help="topic">
+      <CoachBubble hintId={tp.cup ? 'first_cup' : null} />
       {([1, 2, 3] as Level[]).map((lvl) => {
         const won = tp.levelsWon.includes(lvl);
         const open = tp.cup || (tp.nextLevel !== null && lvl <= tp.nextLevel);

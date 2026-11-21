@@ -11,6 +11,7 @@ export type Route =
   | { name: 'parent' }
   | { name: 'parentJoin'; code: string }
   | { name: 'rules' }
+  | { name: 'training' }
   | { name: 'notFound' };
 
 export function parseRoute(hash: string): Route {
@@ -32,6 +33,7 @@ export function parseRoute(hash: string): Route {
       if (p[1] === 'join' && p[2]) return { name: 'parentJoin', code: p[2] };
       return { name: 'parent' };
     case 'rules': return { name: 'rules' };
+    case 'training': return { name: 'training' };
     default: return { name: 'notFound' };
   }
 }

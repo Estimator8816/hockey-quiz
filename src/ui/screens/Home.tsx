@@ -5,7 +5,7 @@ import { Screen } from './Layout';
 export function Home() {
   const { content, progress } = useGame();
   return (
-    <Screen title={APP_NAME}>
+    <Screen title={APP_NAME} help="home">
       <div class="player">
         <div>
           <b>{PLAYER_TEAM}</b>
@@ -13,7 +13,7 @@ export function Home() {
         </div>
         <a class="chip" href="#/trophies">Шкаф</a>
       </div>
-      <a class="card" href="#/play/training/math">Тренировка</a>
+      <a class="card" href="#/training">Тренировка</a>
       {content.subjects.map((s) => {
         const sp = progress.subjects[s.id];
         return (
