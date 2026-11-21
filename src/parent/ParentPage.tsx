@@ -2,27 +2,29 @@ import { useEffect, useMemo, useState } from 'preact/hooks';
 import type { Question } from '../content/types';
 import { myRole } from '../storage/auth';
 import { syncNow } from '../storage/sync';
-import { setDeviceRole } from '../storage/deviceRole';
+import { getDeviceRole, setDeviceRole } from '../storage/deviceRole';
 import { useGame } from '../ui/useGame';
 import { Screen } from '../ui/screens/Layout';
 import { ParentJoin } from './ParentJoin';
 import { InstallCard } from '../ui/screens/Connect';
 import { flagsForClaude, parentStats, type ParentContent } from './stats';
 
-type Gate = 'checking' | 'parent' | 'denied';
+type Gate = 'checking' | 'parent' | 'offline' | 'denied';
 
 const fmtTime = (ts: number) => new Date(ts).toLocaleString('ru-RU', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
 
 export function ParentPage({ code }: { code?: string } = {}) {
   const { client, store, content } = useGame();
-  const [gate, setGate] = useState<Gate>(client ? 'checking' : 'denied');
+  // Телефон уже входил как родитель, а сервер недоступен — показываем сохранённое, а не форму входа.
+  const offlineOr = (): Gate => (getDeviceRole() === 'parent' ? 'offline' : 'denied');
+  const [gate, setGate] = useState<Gate>(client ? 'checking' : offlineOr());
   const [events, setEvents] = useState(() => store.all());
   const [copied, setCopied] = useState<'ok' | 'fail' | null>(null);
 
   useEffect(() => store.subscribe(() => setEvents(store.all())), [store]);
   const [attempt, setAttempt] = useState(0);
   useEffect(() => {
-    if (!client) { setGate('denied'); return; }
+    if (!client) { setGate(offlineOr()); return; }
     let dead = false;
     myRole(client)
       .then(async (role) => {
@@ -32,7 +34,7 @@ export function ParentPage({ code }: { code?: string } = {}) {
         await syncNow(store, client).catch(() => undefined);
         if (!dead) { setEvents(store.all()); setGate('parent'); }
       })
-      .catch(() => { if (!dead) setGate('denied'); });
+      .catch(() => { if (!dead) setGate(offlineOr()); });
     return () => { dead = true; };
   }, [client, store, attempt]);
 
@@ -54,6 +56,7 @@ export function ParentPage({ code }: { code?: string } = {}) {
   return (
     <Screen title="Родителям" back="#/">
       <div class="parent">
+      {gate === 'offline' && <p class="msg" role="status">Нет связи с сервером — показаны сохранённые данные. Обновятся, когда появится интернет.</p>}
       <InstallCard />
       {stats.superPrize && <div class="big" role="status">Супер-приз!</div>}
       {won.map((s) => <div key={s.id} class="big" role="status">Пора готовить приз: {s.title}</div>)}

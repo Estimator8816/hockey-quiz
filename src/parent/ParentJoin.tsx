@@ -3,13 +3,18 @@ import { ensureSession, joinFamily } from '../storage/auth';
 import { navigate } from '../ui/router';
 import { getDeviceRole, setDeviceRole } from '../storage/deviceRole';
 import { useEffect } from 'preact/hooks';
-import { inviteHref, rememberInviteLink } from '../ui/install';
+import { inviteHref, parseInvite, rememberInviteLink, savedInviteLink } from '../ui/install';
 import { useGame } from '../ui/useGame';
 import { Screen } from '../ui/screens/Layout';
 
 export function ParentJoin({ code: initial = '', onJoined }: { code?: string; onJoined?: () => void }) {
   const { client } = useGame();
-  const [code, setCode] = useState(initial);
+  // Код из ссылки, иначе тот, что телефон запомнил (иконка открывается без кода в адресе).
+  const [code, setCode] = useState(() => {
+    if (initial) return initial;
+    const saved = parseInvite(savedInviteLink() ?? '');
+    return saved?.kind === 'parent' ? saved.code : '';
+  });
   const [pin, setPin] = useState('');
   const [msg, setMsg] = useState('');
 

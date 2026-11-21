@@ -28,8 +28,10 @@ export async function joinFamily(client: SupabaseClient, code: string, pin?: str
   return data as Role;
 }
 
+/** null — сервер ответил, что этот телефон не в семье; ошибка (нет связи) — бросает, чтобы не путать с «не вошёл». */
 export async function myRole(client: SupabaseClient): Promise<Role | null> {
   const { data, error } = await client.from('family_members').select('role').maybeSingle();
-  if (error || !data) return null;
+  if (error) throw error;
+  if (!data) return null;
   return data.role as Role;
 }
