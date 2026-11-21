@@ -46,6 +46,7 @@ describe('progress', () => {
       win(2, 2, { won: false, bullitGoal: true })], none(), 10);
     expect(p.bullitGoals).toBe(1);
     expect(p.careerGoals).toBe(6);
+    expect(p.shutouts).toBe(0);
   });
   it('tarnishesAfterSevenDays', () => {
     const ev = cupEvents();
@@ -68,7 +69,7 @@ describe('progress', () => {
   });
   it('finalStaysLockedWhileTopicsUnreleased', () => {
     const s = [subj('math', [['math-01', true], ['math-02', false]]), subj('russian', []), subj('history', [])];
-    const p = deriveProgress(cupEvents('math-01'), s, 2000);
+    const p = deriveProgress([...cupEvents('math-01'), ...cupEvents('math-02')], s, 2000);
     expect(p.subjects.math.released).toBe(1);
     expect(p.subjects.math.total).toBe(2);
     expect(p.subjects.math.finalUnlocked).toBe(false);
@@ -128,5 +129,10 @@ describe('progress', () => {
     const p = deriveProgress([win(1, d(15)), win(2, d(17)), win(3, d(18))], none(), d(18));
     expect(p.streakDays).toBe(2);
     expect(deriveProgress([win(1, d(15))], none(), d(18)).streakDays).toBe(0);
+  });
+  it('streakStartingYesterdayStillCounts', () => {
+    const d = (day: number) => new Date(2026, 10, day, 12, 0).getTime();
+    expect(deriveProgress([win(1, d(16)), win(2, d(17), { goalsAgainst: 0 })], none(), d(18)).streakDays).toBe(2);
+    expect(deriveProgress([win(1, d(17), { goalsAgainst: 0 })], none(), d(18)).shutouts).toBe(1);
   });
 });
