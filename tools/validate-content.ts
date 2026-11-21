@@ -120,9 +120,11 @@ export function validateContent(dir: string): string[] {
     uniq(b.id, 'bullit');
     checkQuiz(b, errors);
     if (!BULLIT_CATEGORIES.includes(b.category)) errors.push(`${b.id}: неизвестная category ${b.category}`);
-    const t = String(b.text).trim();
-    if (bullitTexts.has(t)) errors.push(`${b.id}: text повторяется у другого буллита`);
-    bullitTexts.add(t);
+    if (typeof b.text === 'string') {
+      const t = b.text.trim();
+      if (bullitTexts.has(t)) errors.push(`${b.id}: text повторяется у другого буллита`);
+      bullitTexts.add(t);
+    }
   }
 
   return errors;
