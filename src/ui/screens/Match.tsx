@@ -4,7 +4,7 @@ import { PLAYER_TEAM } from '../../config';
 import {
   answer, concededLeft, createMatch, currentItem, type MatchItem, type MatchState, type Mode, type Outcome,
 } from '../../engine/match';
-import { newEvent, type AnswerEvent, type FlagEvent, type MatchEndEvent } from '../../engine/events';
+import { newEvent, type AnswerEvent, type FlagEvent, type HintSeenEvent, type MatchEndEvent } from '../../engine/events';
 import { pickBullit, pickFinal, pickFriendly, pickQuestions } from '../../engine/selection';
 import { CoachBubble, useFirstUnseen } from '../CoachBubble';
 import { navigate } from '../router';
@@ -16,7 +16,7 @@ const MODES: Mode[] = ['regular', 'friendly', 'final', 'training'];
 function build(g: Game, mode: Mode, subjectId: string, topicId: string | null, level: number | null) {
   const { content, store, progress } = g;
   const subject = content.subjects.find((s) => s.id === subjectId);
-  if (!subject) return null;
+  if (!subject && mode !== 'training') return null;
   const history = store.all().filter((e): e is AnswerEvent => e.kind === 'answer');
   const flagged = progress.flagged;
   const rng = Math.random;
@@ -30,14 +30,14 @@ function build(g: Game, mode: Mode, subjectId: string, topicId: string | null, l
   } else if (mode === 'friendly') {
     questions = pickFriendly(topicPool(topicId), history, flagged, rng);
   } else if (mode === 'final') {
-    questions = pickFinal(subject.topics.map((t) => topicPool(t.id)), history, flagged, rng);
+    questions = pickFinal(subject!.topics.map((t) => topicPool(t.id)), history, flagged, rng);
   } else {
     questions = pickQuestions(content.training, history, flagged, 3, rng);
   }
   if (questions.length === 0) return null;
   const bullit = mode === 'regular' ? pickBullit(content.bullits, history, flagged, rng) : null;
   const state = createMatch({
-    mode, subject: subject.id, topicId: mode === 'final' || mode === 'training' ? null : topicId,
+    mode, subject: (subject?.id ?? 'math') as SubjectId, topicId: mode === 'final' || mode === 'training' ? null : topicId,
     level: lvl, questions, bullit, rng,
   });
   return { state, matchId: crypto.randomUUID() };
@@ -57,7 +57,7 @@ export function Match(props: {
     const lvl = props.level ?? 0;
     return !tp || !(tp.cup || (tp.nextLevel !== null && lvl <= tp.nextLevel));
   })();
-  const valid = MODES.includes(mode) && !!subject;
+  const valid = MODES.includes(mode) && (!!subject || mode === 'training');
   const [init] = useState(() => (valid && !locked ? build(game, mode, props.subjectId, props.topicId, props.level) : null));
   const [state, setState] = useState<MatchState | null>(init?.state ?? null);
   const [fb, setFb] = useState<Feedback | null>(null);
@@ -130,7 +130,7 @@ export function Match(props: {
 
   const item = fb ? fb.item : currentItem(state);
   const lvl = state.level;
-  const opp = mode === 'final' ? 'Сборная учебника' : mode === 'training' ? 'Тренер' : subject!.title;
+  const opp = mode === 'final' ? 'Сборная учебника' : mode === 'training' ? 'Тренер' : (subject?.title ?? '');
   const squad = mode === 'final' ? '' : mode === 'regular' && lvl ? LEVEL_SQUAD[lvl]
     : mode === 'friendly' ? 'Товарищеский' : mode === 'training' ? 'Тренировка' : '';
   const left = concededLeft(state);
@@ -138,7 +138,13 @@ export function Match(props: {
   const frac = item && !fb ? Math.max(0, 1 - elapsed / item.timerSec) : 0;
 
   const next = () => {
-    if (state.over && training) { navigate('/'); return; }
+    if (state.over && training) {
+      if (!game.progress.hintsSeen.has('training_end')) {
+        game.store.append(newEvent<HintSeenEvent>({ kind: 'hint_seen', hintId: 'training_end' }));
+      }
+      navigate('/');
+      return;
+    }
     if (state.over) { navigate(`/result/${init.matchId}`); return; }
     shownAt.current = Date.now();
     ref.current = { state, fb: null };
@@ -153,7 +159,7 @@ export function Match(props: {
   };
 
   return (
-    <Screen title={opp} back={backTo} help="match">
+    <Screen title={opp} back={backTo} help={fb ? 'match' : undefined}>
       <section class="board" aria-label="Табло">
         <div class="teams"><span>{PLAYER_TEAM}</span><span>{opp}</span></div>
         <div class="score" data-testid="score">{state.goalsFor} : {state.goalsAgainst}</div>

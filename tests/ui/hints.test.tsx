@@ -37,7 +37,7 @@ describe('подсказки тренера', () => {
     expect(location.hash).toBe('#/parent');
   });
 
-  it('trainingFlowShowsBubblesThenHome', () => {
+  it('trainingBubblesShownPerAnswer', () => {
     const store = mountApp('#/training');
     const answers = () => [...document.querySelectorAll('button.ans')] as HTMLButtonElement[];
     fireEvent.click(answers().find((b) => b.textContent!.includes('ПРАВИЛЬНО'))!);
@@ -47,6 +47,18 @@ describe('подсказки тренера', () => {
     fireEvent.click(screen.getByText('Дальше'));
     fireEvent.click(answers().find((b) => !b.textContent!.includes('ПРАВИЛЬНО'))!);
     expect(screen.getByText(HINTS.training_wrong[0])).toBeTruthy();
+  });
+
+  it('trainingEndsOnNextButtonWithoutLooping', async () => {
+    mountApp('#/training');
+    for (let i = 0; i < 3; i++) {
+      fireEvent.click(document.querySelector('button.ans') as HTMLButtonElement);
+      fireEvent.click(screen.getByText('Дальше'));
+    }
+    await waitFor(() => expect(location.hash).toBe('#/'));
+    await new Promise((r) => setTimeout(r, 50));
+    expect(location.hash).toBe('#/');
+    expect(screen.getByText('Тренировка')).toBeTruthy();
   });
 
   it('coachShownOnceThenNever', () => {
