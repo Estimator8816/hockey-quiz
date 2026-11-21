@@ -10,6 +10,7 @@ export default defineConfig({
     preact(),
     VitePWA({
       registerType: 'autoUpdate',
+      workbox: { globPatterns: ['**/*.{js,css,html,png,jpg,webp,svg,woff2}'] },
       manifest: {
         name: APP_NAME,
         short_name: APP_NAME,

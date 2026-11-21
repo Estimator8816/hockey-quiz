@@ -1,6 +1,7 @@
 import { deriveProgress } from '../../engine/progress';
 import type { MatchEndEvent } from '../../engine/events';
 import { CoachBubble, useFirstUnseen } from '../CoachBubble';
+import { ART } from '../art';
 import { useGame } from '../useGame';
 import { Screen } from './Layout';
 
@@ -26,7 +27,7 @@ export function MatchResult({ matchId }: { matchId: string }) {
         <h2>{end.won ? 'Победа!' : 'Поражение'}</h2>
         {end.bullitGoal && <p>Гол в буллите!</p>}
         {!end.won && <p class="burn">Голы сгорели: {end.goalsFor}</p>}
-        {shutout && <p class="star">⭐ Сухой матч! Звезда вратаря</p>}
+        {shutout && <div class="star"><img src={ART.star} alt="" /><p>Звезда вратаря</p><small>Сухой матч</small></div>}
         {newRank && <p class="rank">Новое звание: {newRank}</p>}
       </div>
       <a class="big" href={back}>Дальше</a>
