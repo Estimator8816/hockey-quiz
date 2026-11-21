@@ -14,3 +14,7 @@ export interface MatchEndEvent extends Base {
 export interface FlagEvent extends Base { kind: 'flag'; questionId: string }
 export interface HintSeenEvent extends Base { kind: 'hint_seen'; hintId: string }
 export type GameEvent = AnswerEvent | MatchEndEvent | FlagEvent | HintSeenEvent;
+
+export function newEvent<T extends GameEvent>(e: Omit<T, 'id' | 'ts'>): T {
+  return { ...e, id: crypto.randomUUID(), ts: Date.now() } as unknown as T;
+}
