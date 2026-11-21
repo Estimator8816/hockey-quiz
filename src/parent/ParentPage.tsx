@@ -6,6 +6,7 @@ import { setDeviceRole } from '../storage/deviceRole';
 import { useGame } from '../ui/useGame';
 import { Screen } from '../ui/screens/Layout';
 import { ParentJoin } from './ParentJoin';
+import { InstallCard } from '../ui/screens/Connect';
 import { flagsForClaude, parentStats, type ParentContent } from './stats';
 
 type Gate = 'checking' | 'parent' | 'denied';
@@ -53,6 +54,7 @@ export function ParentPage({ code }: { code?: string } = {}) {
   return (
     <Screen title="Родителям" back="#/">
       <div class="parent">
+      <InstallCard />
       {stats.superPrize && <div class="big" role="status">Супер-приз!</div>}
       {won.map((s) => <div key={s.id} class="big" role="status">Пора готовить приз: {s.title}</div>)}
 

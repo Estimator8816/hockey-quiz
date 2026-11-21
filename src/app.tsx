@@ -4,6 +4,8 @@ import { APP_NAME } from './config';
 import { GameProvider } from './ui/useGame';
 import { navigate, useRoute } from './ui/router';
 import { getDeviceRole } from './storage/deviceRole';
+import { isStandalone } from './ui/install';
+import { Connect } from './ui/screens/Connect';
 import { Home } from './ui/screens/Home';
 import { Subject } from './ui/screens/Subject';
 import { Topic } from './ui/screens/Topic';
@@ -40,9 +42,14 @@ export function Routes() {
  *  Телефон родителя: главная — это статистика, игру не показываем. */
 function FirstRun() {
   const r = useRoute();
-  const parentHome = r.name === 'home' && getDeviceRole() === 'parent';
+  const role = getDeviceRole();
+  const parentHome = r.name === 'home' && role === 'parent';
   useEffect(() => { if (parentHome) navigate('/parent'); }, [parentHome]);
-  return parentHome ? null : <Routes />;
+  if (parentHome) return null;
+  // Иконка открылась без кода и телефон ещё не подключён — сначала подключение (вставить ссылку).
+  const linkRoute = r.name === 'join' || r.name === 'parentJoin' || r.name === 'parent';
+  if (isStandalone() && !role && !linkRoute) return <Connect />;
+  return <Routes />;
 }
 
 export function App(props: Omit<ComponentProps<typeof GameProvider>, 'children'> = {}) {

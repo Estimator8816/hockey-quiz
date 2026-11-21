@@ -2,6 +2,7 @@ import { APP_NAME, FEATURE_DUEL, PLAYER_TEAM } from '../../config';
 import { ART } from '../art';
 import { useGame } from '../useGame';
 import { Screen } from './Layout';
+import { InstallCard } from './Connect';
 
 const SUBJ_ICON: Record<string, string> = { math: '🧮', russian: '📖', history: '🏛' };
 
@@ -31,6 +32,7 @@ export function Home() {
           </a>
         );
       })}
+      <InstallCard />
       <div class="bottom">
         <a class="navbtn" href="#/trophies"><img src={ART.cup} alt="" />Шкаф с кубками</a>
         <a class="navbtn" href="#/rules"><span aria-hidden="true">📖</span>Правила</a>

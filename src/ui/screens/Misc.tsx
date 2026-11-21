@@ -3,6 +3,7 @@ import type { SupabaseClient } from '@supabase/supabase-js';
 import { ensureSession, joinFamily, type Role } from '../../storage/auth';
 import { syncNow } from '../../storage/sync';
 import { getDeviceRole, setDeviceRole } from '../../storage/deviceRole';
+import { inviteHref, rememberInviteLink } from '../install';
 import type { EventStore } from '../../storage/store';
 import { navigate } from '../router';
 import { useGame } from '../useGame';
@@ -32,6 +33,7 @@ export function Join({ code }: { code: string }) {
   const { client, store } = useGame();
   const [msg, setMsg] = useState(client ? 'Подключаемся…' : 'Нужен интернет, чтобы подключиться. Попробуй позже.');
   useEffect(() => {
+    rememberInviteLink(inviteHref({ kind: 'child', code }));
     // Повторный запуск с иконки: телефон уже подключён — сразу к игре, без сети.
     const known = getDeviceRole();
     if (known === 'child') { navigate('/'); return; }

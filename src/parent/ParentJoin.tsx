@@ -3,6 +3,7 @@ import { ensureSession, joinFamily } from '../storage/auth';
 import { navigate } from '../ui/router';
 import { getDeviceRole, setDeviceRole } from '../storage/deviceRole';
 import { useEffect } from 'preact/hooks';
+import { inviteHref, rememberInviteLink } from '../ui/install';
 import { useGame } from '../ui/useGame';
 import { Screen } from '../ui/screens/Layout';
 
@@ -13,7 +14,10 @@ export function ParentJoin({ code: initial = '', onJoined }: { code?: string; on
   const [msg, setMsg] = useState('');
 
   // Иконка родителя открывает ту же ссылку: если телефон уже вошёл — сразу статистика, PIN не спрашиваем.
-  useEffect(() => { if (!onJoined && getDeviceRole() === 'parent') navigate('/parent'); }, [onJoined]);
+  useEffect(() => {
+    if (initial) rememberInviteLink(inviteHref({ kind: 'parent', code: initial }));
+    if (!onJoined && getDeviceRole() === 'parent') navigate('/parent');
+  }, [onJoined, initial]);
 
   const submit = async () => {
     if (!client) return;
