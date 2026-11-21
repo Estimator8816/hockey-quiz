@@ -84,3 +84,11 @@ button { font: inherit; color: inherit; }
 .screen { position: relative; }
 .rules { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 12px; }
 .rules li { background: var(--card); border-radius: var(--radius); padding: 14px 16px; font-size: 20px; box-shadow: var(--shadow-card); }
+
+/* Родительская страница: только таблицы и цифры */
+table { width: 100%; border-collapse: collapse; background: var(--card); font-size: 14px; }
+caption { text-align: left; font-family: var(--font-head); font-weight: 400; padding: 6px 0; }
+th, td { border: 1px solid var(--card-edge); padding: 6px 8px; text-align: left; }
+thead th { background: var(--ice2); }
+label { display: flex; flex-direction: column; gap: 4px; }
+input { font: inherit; padding: 10px; border: 2px solid var(--card-edge); border-radius: var(--radius-sm); }

@@ -11,6 +11,8 @@ import { MatchResult } from './ui/screens/MatchResult';
 import { Trophies } from './ui/screens/Trophies';
 import { Rules } from './ui/screens/Rules';
 import { Training } from './ui/screens/Training';
+import { ParentPage } from './parent/ParentPage';
+import { ParentJoin } from './parent/ParentJoin';
 import { Join, Placeholder } from './ui/screens/Misc';
 
 export function Routes() {
@@ -26,8 +28,8 @@ export function Routes() {
     case 'result': return <MatchResult matchId={r.matchId} />;
     case 'trophies': return <Trophies />;
     case 'join': return <Join code={r.code} />;
-    case 'parent': return <Placeholder title="Родителям" text="Страница для родителей скоро появится." />;
-    case 'parentJoin': return <Placeholder title="Родителям" text="Вход для родителей скоро появится." />;
+    case 'parent': return <ParentPage />;
+    case 'parentJoin': return <ParentJoin code={r.code} />;
     case 'rules': return <Rules />;
     default: return <Placeholder title="Не найдено" text="Такого экрана нет." />;
   }
