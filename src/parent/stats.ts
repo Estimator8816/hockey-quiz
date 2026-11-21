@@ -11,8 +11,8 @@ export interface ParentStats {
   superPrize: boolean; streakDays: number;
   hardTopics: { topicId: string; title: string; played: number; lost: number }[];
   flags: { questionId: string; text: string; ts: number }[];
-  lowPool: { topicId: string; level: Level; left: number }[];
-  recentMatches: { ts: number; subject: SubjectId; topicTitle: string; mode: Mode; score: string; won: boolean; answersSec: number[] }[];
+  lowPool: { topicId: string; title: string; level: Level; left: number }[];
+  recentMatches: { matchId: string; ts: number; subject: SubjectId; topicTitle: string; mode: Mode; score: string; won: boolean; answersSec: number[] }[];
 }
 export interface ParentContent {
   subjects: Subject[]; questionsByTopic: Map<string, Question[]>; questionsById: Map<string, Question>;
@@ -67,13 +67,13 @@ export function parentStats(events: GameEvent[], now: number, content: ParentCon
       if (!t.released) continue;
       for (const level of [1, 2, 3] as Level[]) {
         const left = (content.questionsByTopic.get(t.id) ?? []).filter((q) => q.level === level && !p.flagged.has(q.id)).length;
-        if (left < POOL_MIN) lowPool.push({ topicId: t.id, level, left });
+        if (left < POOL_MIN) lowPool.push({ topicId: t.id, title: t.title, level, left });
       }
     }
   }
 
   const recentMatches = ends.slice(-10).reverse().map((e) => ({
-    ts: e.ts, subject: e.subject, topicTitle: e.topicId ? topicTitle.get(e.topicId) ?? e.topicId : '—', mode: e.mode,
+    matchId: e.matchId, ts: e.ts, subject: e.subject, topicTitle: e.topicId ? topicTitle.get(e.topicId) ?? e.topicId : '—', mode: e.mode,
     score: `${e.goalsFor} : ${e.goalsAgainst}`, won: e.won,
     answersSec: answers.filter((a) => a.matchId === e.matchId).map((a) => Math.round(a.ms / 1000)),
   }));

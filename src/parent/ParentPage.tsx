@@ -15,9 +15,10 @@ export function ParentPage({ code }: { code?: string } = {}) {
   const { client, store, content } = useGame();
   const [gate, setGate] = useState<Gate>(client ? 'checking' : 'denied');
   const [events, setEvents] = useState(() => store.all());
-  const [copied, setCopied] = useState(false);
+  const [copied, setCopied] = useState<'ok' | 'fail' | null>(null);
 
   useEffect(() => store.subscribe(() => setEvents(store.all())), [store]);
+  const [attempt, setAttempt] = useState(0);
   useEffect(() => {
     if (!client) { setGate('denied'); return; }
     let dead = false;
@@ -30,7 +31,7 @@ export function ParentPage({ code }: { code?: string } = {}) {
       })
       .catch(() => { if (!dead) setGate('denied'); });
     return () => { dead = true; };
-  }, [client, store]);
+  }, [client, store, attempt]);
 
   const pc = useMemo<ParentContent>(() => {
     const byId = new Map<string, Question>();
@@ -40,15 +41,16 @@ export function ParentPage({ code }: { code?: string } = {}) {
   const stats = useMemo(() => parentStats(events, Date.now(), pc), [events, pc]);
 
   if (gate === 'checking') return <Screen title="Родителям" back="#/"><p class="msg">Загрузка…</p></Screen>;
-  if (gate === 'denied') return <ParentJoin code={code} />;
+  if (gate === 'denied') return <ParentJoin code={code} onJoined={() => { setGate('checking'); setAttempt((n) => n + 1); }} />;
 
   const copy = async () => {
-    try { await navigator.clipboard.writeText(flagsForClaude(stats, pc)); setCopied(true); } catch { setCopied(false); }
+    try { await navigator.clipboard.writeText(flagsForClaude(stats, pc)); setCopied('ok'); } catch { setCopied('fail'); }
   };
   const won = stats.subjects.filter((s) => s.seasonWon);
 
   return (
     <Screen title="Родителям" back="#/">
+      <div class="parent">
       {stats.superPrize && <div class="big" role="status">Супер-приз!</div>}
       {won.map((s) => <div key={s.id} class="big" role="status">Пора готовить приз: {s.title}</div>)}
 
@@ -87,18 +89,18 @@ export function ParentPage({ code }: { code?: string } = {}) {
         <thead><tr><th>Вопрос</th><th>Когда</th></tr></thead>
         <tbody>
           {stats.flags.length === 0 && <tr><td colSpan={2}>Нет отметок</td></tr>}
-          {stats.flags.map((f) => <tr key={f.questionId + f.ts}><td>{f.text}<br /><small>{f.questionId}</small></td><td>{fmtTime(f.ts)}</td></tr>)}
+          {stats.flags.map((f, i) => <tr key={`${f.questionId}-${i}`}><td>{f.text}<br /><small>{f.questionId}</small></td><td>{fmtTime(f.ts)}</td></tr>)}
         </tbody>
       </table>
       <button class="big" type="button" onClick={() => void copy()}>Скопировать для Claude</button>
-      {copied && <p role="status">Скопировано</p>}
+      {copied && <p role="status">{copied === 'ok' ? 'Скопировано' : 'Не удалось скопировать. Выделите текст вручную.'}</p>}
 
       <table>
         <caption>Мало вопросов (меньше 12)</caption>
         <thead><tr><th>Тема</th><th>Уровень</th><th>Осталось</th></tr></thead>
         <tbody>
           {stats.lowPool.length === 0 && <tr><td colSpan={3}>Хватает</td></tr>}
-          {stats.lowPool.map((l) => <tr key={l.topicId + l.level}><th>{l.topicId}</th><td>{l.level}</td><td>{l.left}</td></tr>)}
+          {stats.lowPool.map((l) => <tr key={l.topicId + l.level}><th>{l.title}</th><td>{l.level}</td><td>{l.left}</td></tr>)}
         </tbody>
       </table>
 
@@ -108,11 +110,12 @@ export function ParentPage({ code }: { code?: string } = {}) {
         <tbody>
           {stats.recentMatches.length === 0 && <tr><td colSpan={5}>Матчей ещё не было</td></tr>}
           {stats.recentMatches.map((m) => (
-            <tr key={m.ts + m.topicTitle + m.score}><td>{fmtTime(m.ts)}</td><td>{m.topicTitle}</td><td>{m.score}</td>
+            <tr key={m.matchId}><td>{fmtTime(m.ts)}</td><td>{m.topicTitle}</td><td>{m.score}</td>
               <td>{m.won ? 'победа' : 'поражение'}</td><td>{m.answersSec.join(', ')}</td></tr>
           ))}
         </tbody>
       </table>
+      </div>
     </Screen>
   );
 }

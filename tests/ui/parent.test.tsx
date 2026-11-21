@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { cleanup, render, screen, waitFor } from '@testing-library/preact';
+import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/preact';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import { createLocalStore } from '../../src/storage/store';
 import { newEvent, type MatchEndEvent } from '../../src/engine/events';
@@ -8,7 +8,7 @@ import { Routes } from '../../src/app';
 import { content, memStorage, mount } from './fixtures';
 
 const role = vi.hoisted(() => ({ value: 'parent' as 'parent' | 'child' | null }));
-vi.mock('../../src/storage/auth', async (orig) => ({ ...(await orig<object>()), myRole: async () => role.value }));
+vi.mock('../../src/storage/auth', async (orig) => ({ ...(await orig<object>()), myRole: async () => role.value, ensureSession: async () => 'u', joinFamily: async () => { role.value = 'parent'; return 'parent'; } }));
 vi.mock('../../src/storage/sync', async (orig) => ({ ...(await orig<object>()), syncNow: async () => ({ pushed: 0, pulled: 0 }) }));
 
 afterEach(cleanup);
@@ -34,5 +34,15 @@ describe('родительская страница', () => {
   it('noClientSeesJoin', () => {
     mount('#/parent');
     expect(screen.getByText(/нужна родительская ссылка/)).toBeTruthy();
+  });
+  it('joinFromEmbeddedFormShowsStats', async () => {
+    role.value = 'child';
+    location.hash = '#/parent';
+    const { container } = render(<GameProvider store={createLocalStore(memStorage())} client={{} as SupabaseClient} content={content}><Routes /></GameProvider>);
+    await waitFor(() => expect(screen.getByText(/нужна родительская ссылка/)).toBeTruthy());
+    const input = container.querySelector('input') as HTMLInputElement;
+    fireEvent.input(input, { target: { value: 'CODE' } });
+    fireEvent.click(screen.getByText('Войти'));
+    await waitFor(() => expect(screen.getByText('Скопировать для Claude')).toBeTruthy());
   });
 });

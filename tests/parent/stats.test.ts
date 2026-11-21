@@ -1,4 +1,5 @@
 import { describe, it, expect } from 'vitest';
+import { deriveProgress } from '../../src/engine/progress';
 import { parentStats, flagsForClaude, type ParentContent } from '../../src/parent/stats';
 import type { AnswerEvent, FlagEvent, GameEvent, MatchEndEvent } from '../../src/engine/events';
 import type { Level, Question, Subject } from '../../src/content/types';
@@ -58,7 +59,7 @@ describe('parent stats', () => {
   it('lowPoolWhenUnder12', () => {
     expect(stats([]).lowPool).toEqual([]);
     const s = stats([flag('math-01-2-000'), flag('math-01-2-001'), flag('math-01-1-000')]);
-    expect(s.lowPool).toEqual([{ topicId: 'math-01', level: 2, left: 10 }]);
+    expect(s.lowPool).toEqual([{ topicId: 'math-01', title: 'Тема один', level: 2, left: 10 }]);
   });
   it('recentMatchesShowAnswerSeconds', () => {
     const m = end({ matchId: 'mm', goalsFor: 4, goalsAgainst: 3, ts: NOW });
@@ -75,5 +76,10 @@ describe('parent stats', () => {
     expect(text).toContain('Тема один');
     expect(text).toContain('Текст 1-1');
     expect(flagsForClaude(stats([]), content)).toMatch(/нет отметок/);
+  });
+  it('goalsMatchCareerRuleWithBullit', () => {
+    const ev = [end({ goalsFor: 7, bullitGoal: true }), end({ won: false, goalsFor: 4, bullitGoal: true })];
+    expect(stats(ev).today.goals).toBe(deriveProgress(ev, subjects, NOW).careerGoals);
+    expect(stats(ev).today.goals).toBe(8);
   });
 });
