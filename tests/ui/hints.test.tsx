@@ -17,15 +17,16 @@ const seen = (store: ReturnType<typeof createLocalStore>, id: string) =>
   store.append(newEvent<HintSeenEvent>({ kind: 'hint_seen', hintId: id }));
 
 describe('подсказки тренера', () => {
-  it('trainingOnFirstLaunchOnly', async () => {
+  it('firstLaunchStaysOnHomeTrainingHighlightedUntilDone', () => {
     mountApp('#/');
-    await waitFor(() => expect(screen.getByTestId('score')).toBeTruthy());
-    expect(location.hash).toBe('#/training');
+    expect(location.hash).toBe('#/');
+    expect(document.querySelector('a.card-start')).toBeTruthy();
     cleanup();
     const store = createLocalStore(memStorage());
     seen(store, 'training_end');
     mountApp('#/', store);
     expect(location.hash).toBe('#/');
+    expect(document.querySelector('a.card-start')).toBeNull();
     expect(screen.getByText('Тренировка')).toBeTruthy();
   });
 

@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'preact/hooks';
 import type { Question } from '../content/types';
 import { myRole } from '../storage/auth';
 import { syncNow } from '../storage/sync';
+import { setDeviceRole } from '../storage/deviceRole';
 import { useGame } from '../ui/useGame';
 import { Screen } from '../ui/screens/Layout';
 import { ParentJoin } from './ParentJoin';
@@ -26,6 +27,7 @@ export function ParentPage({ code }: { code?: string } = {}) {
       .then(async (role) => {
         if (dead) return;
         if (role !== 'parent') { setGate('denied'); return; }
+        setDeviceRole('parent');
         await syncNow(store, client).catch(() => undefined);
         if (!dead) { setEvents(store.all()); setGate('parent'); }
       })

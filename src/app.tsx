@@ -1,8 +1,9 @@
 import { useEffect } from 'preact/hooks';
 import type { ComponentProps } from 'preact';
 import { APP_NAME } from './config';
-import { GameProvider, useGame } from './ui/useGame';
+import { GameProvider } from './ui/useGame';
 import { navigate, useRoute } from './ui/router';
+import { getDeviceRole } from './storage/deviceRole';
 import { Home } from './ui/screens/Home';
 import { Subject } from './ui/screens/Subject';
 import { Topic } from './ui/screens/Topic';
@@ -35,14 +36,13 @@ export function Routes() {
   }
 }
 
-/** Первый запуск: пока не пройдена тренировка, ведём на неё (кроме ссылки подключения и родителей). */
+/** Запуск всегда на главный экран с кнопками: игра сама не начинается (решение Максима 22.11).
+ *  Телефон родителя: главная — это статистика, игру не показываем. */
 function FirstRun() {
-  const { progress, content } = useGame();
   const r = useRoute();
-  const exempt = r.name === 'training' || r.name === 'join' || r.name === 'parent' || r.name === 'parentJoin';
-  const need = !progress.hintsSeen.has('training_end') && content.training.length > 0 && !exempt;
-  useEffect(() => { if (need) navigate('/training'); }, [need]);
-  return need ? null : <Routes />;
+  const parentHome = r.name === 'home' && getDeviceRole() === 'parent';
+  useEffect(() => { if (parentHome) navigate('/parent'); }, [parentHome]);
+  return parentHome ? null : <Routes />;
 }
 
 export function App(props: Omit<ComponentProps<typeof GameProvider>, 'children'> = {}) {

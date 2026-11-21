@@ -1,6 +1,8 @@
 import { useState } from 'preact/hooks';
 import { ensureSession, joinFamily } from '../storage/auth';
 import { navigate } from '../ui/router';
+import { getDeviceRole, setDeviceRole } from '../storage/deviceRole';
+import { useEffect } from 'preact/hooks';
 import { useGame } from '../ui/useGame';
 import { Screen } from '../ui/screens/Layout';
 
@@ -10,13 +12,16 @@ export function ParentJoin({ code: initial = '', onJoined }: { code?: string; on
   const [pin, setPin] = useState('');
   const [msg, setMsg] = useState('');
 
+  // Иконка родителя открывает ту же ссылку: если телефон уже вошёл — сразу статистика, PIN не спрашиваем.
+  useEffect(() => { if (!onJoined && getDeviceRole() === 'parent') navigate('/parent'); }, [onJoined]);
+
   const submit = async () => {
     if (!client) return;
     setMsg('Проверяем…');
     try {
       await ensureSession(client);
       const role = await joinFamily(client, code.trim(), pin.trim() || undefined);
-      if (role === 'parent') { if (onJoined) onJoined(); else navigate('/parent'); }
+      if (role === 'parent') { setDeviceRole('parent'); if (onJoined) onJoined(); else navigate('/parent'); }
       else setMsg('Эта ссылка не даёт доступ родителя.');
     } catch {
       setMsg('Не получилось. Проверьте ссылку, код и интернет.');

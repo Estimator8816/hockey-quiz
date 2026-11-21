@@ -2,7 +2,7 @@
 import { defineConfig } from 'vite';
 import preact from '@preact/preset-vite';
 import { VitePWA } from 'vite-plugin-pwa';
-import { APP_NAME, BASE } from './src/config';
+import { BASE } from './src/config';
 
 export default defineConfig({
   base: BASE,
@@ -11,19 +11,9 @@ export default defineConfig({
     VitePWA({
       registerType: 'autoUpdate',
       workbox: { globPatterns: ['**/*.{js,css,html,png,jpg,webp,svg,woff2}'] },
-      manifest: {
-        name: APP_NAME,
-        short_name: APP_NAME,
-        display: 'standalone',
-        lang: 'ru',
-        start_url: BASE,
-        background_color: '#0b2a4a',
-        theme_color: '#0b2a4a',
-        icons: [
-          { src: 'icon-180.png', sizes: '180x180', type: 'image/png' },
-          { src: 'icon-512.png', sizes: '512x512', type: 'image/png' },
-        ],
-      },
+      // Без манифеста: iPhone кладёт на экран «Домой» ту ссылку, что открыта в Safari (с кодом приглашения).
+      // С манифестом иконка открывала бы общую главную, а у иконки своё хранилище, не как в Safari, — вход терялся.
+      manifest: false,
     }),
   ],
   test: {

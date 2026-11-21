@@ -118,6 +118,8 @@ h1.ttl { font-size: 20px; text-align: center; background: linear-gradient(180deg
 .tagline { margin: 0 auto; text-align: center; text-transform: uppercase; font-size: 12px; font-weight: 900; letter-spacing: .5px; max-width: 280px;
   background: rgba(8, 24, 64, .88); border: 2px solid #3d7fd0; border-radius: 12px; padding: 8px 14px; }
 .card { background: linear-gradient(180deg, #2a63c4, #0d2d70); color: #fff; border: 2px solid #8cc4ff; box-shadow: 0 4px 0 #06122e; text-transform: uppercase; font-size: 16px; position: relative; overflow: hidden; }
+.card-start { border-color: var(--gold); box-shadow: 0 4px 0 #06122e, 0 0 16px rgba(255, 213, 74, .75); }
+.card-start small { color: var(--gold); font-size: 12px; margin-left: 6px; }
 .subj { position: relative; overflow: hidden; min-height: 84px; font-size: 22px; text-transform: uppercase; border: 3px solid rgba(255, 255, 255, .85);
   box-shadow: 0 5px 0 rgba(0, 0, 0, .45), 0 0 14px rgba(120, 190, 255, .45); text-shadow: 0 2px 0 rgba(0, 0, 0, .45); }
 .subj::before, .card::before, .big::before, .ans::before { content: ''; position: absolute; inset: 0; background: var(--gloss); pointer-events: none; }

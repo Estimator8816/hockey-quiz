@@ -18,7 +18,9 @@ export function Home() {
           <span>{progress.rank ?? 'Без звания'} · голов: {progress.careerGoals}</span>
         </div>
       </div>
-      <a class="card" href="#/training">Тренировка</a>
+      <a class={progress.hintsSeen.has('training_end') ? 'card' : 'card card-start'} href="#/training">
+        Тренировка{!progress.hintsSeen.has('training_end') && <small> · начни отсюда</small>}
+      </a>
       {content.subjects.map((s) => {
         const sp = progress.subjects[s.id];
         return (

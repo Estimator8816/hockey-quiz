@@ -2,6 +2,7 @@ import { useEffect, useState } from 'preact/hooks';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import { ensureSession, joinFamily, type Role } from '../../storage/auth';
 import { syncNow } from '../../storage/sync';
+import { getDeviceRole, setDeviceRole } from '../../storage/deviceRole';
 import type { EventStore } from '../../storage/store';
 import { navigate } from '../router';
 import { useGame } from '../useGame';
@@ -18,6 +19,7 @@ export async function connectByCode(client: SupabaseClient, store: EventStore, c
   try {
     await ensureSession(client);
     const role = await joinFamily(client, code);
+    setDeviceRole(role);
     await syncNow(store, client);
     return role;
   } catch (e) {
@@ -30,6 +32,10 @@ export function Join({ code }: { code: string }) {
   const { client, store } = useGame();
   const [msg, setMsg] = useState(client ? 'Подключаемся…' : 'Нужен интернет, чтобы подключиться. Попробуй позже.');
   useEffect(() => {
+    // Повторный запуск с иконки: телефон уже подключён — сразу к игре, без сети.
+    const known = getDeviceRole();
+    if (known === 'child') { navigate('/'); return; }
+    if (known === 'parent') { navigate('/parent'); return; }
     if (!client) return;
     let dead = false;
     connectByCode(client, store, code)
