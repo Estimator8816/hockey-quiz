@@ -9,6 +9,7 @@ const MIN_PER_LEVEL = 20;
 const MIN_BULLITS = 100;
 const TRAINING_COUNT = 3;
 const LEVELS = [1, 2, 3];
+const BULLIT_CATEGORIES = ['logic', 'subject', 'life', 'hockey'];
 const SUBJECT_IDS = ['math', 'russian', 'history'];
 
 type Raw = Record<string, any>;
@@ -114,9 +115,14 @@ export function validateContent(dir: string): string[] {
   // буллиты
   const bullits: Raw[] = existsSync(join(dir, 'bullits.json')) ? readJson(join(dir, 'bullits.json'), errors) ?? [] : [];
   if (bullits.length < MIN_BULLITS) errors.push(`bullits: ${bullits.length} < ${MIN_BULLITS}`);
+  const bullitTexts = new Set<string>();
   for (const b of bullits) {
     uniq(b.id, 'bullit');
     checkQuiz(b, errors);
+    if (!BULLIT_CATEGORIES.includes(b.category)) errors.push(`${b.id}: неизвестная category ${b.category}`);
+    const t = String(b.text).trim();
+    if (bullitTexts.has(t)) errors.push(`${b.id}: text повторяется у другого буллита`);
+    bullitTexts.add(t);
   }
 
   return errors;

@@ -121,4 +121,18 @@ describe('validateContent', () => {
     const errors = validateContent(write(c));
     expect(errors.some((e) => e.includes('math-01-1-001'))).toBe(true);
   });
+
+  test('rejectsUnknownBullitCategory', () => {
+    const c = validContent();
+    c.bullits[0].category = 'cooking';
+    const errors = validateContent(write(c));
+    expect(errors.some((e) => e.includes('b-1') && e.includes('category'))).toBe(true);
+  });
+
+  test('rejectsDuplicateBullitText', () => {
+    const c = validContent();
+    c.bullits[1].text = c.bullits[0].text;
+    const errors = validateContent(write(c));
+    expect(errors.some((e) => e.includes('b-2') && e.includes('text'))).toBe(true);
+  });
 });
