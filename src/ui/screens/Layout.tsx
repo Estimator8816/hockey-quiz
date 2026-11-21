@@ -7,7 +7,7 @@ export function Screen(props: { title?: string; back?: string; help?: ScreenId; 
   return (
     <main class="screen">
       <header class="top">
-        {props.back ? <a class="back" href={props.back} aria-label="Назад">‹</a> : <span class="back-gap" />}
+        {props.back ? <a class="back" href={props.back} aria-label="Назад"></a> : <span class="back-gap" />}
         {props.title === '' ? <span class="ttl" /> : <h1 class="ttl">{props.title ?? APP_NAME}</h1>}
         {props.help ? <HelpButton screen={props.help} /> : <span class="back-gap" />}
       </header>

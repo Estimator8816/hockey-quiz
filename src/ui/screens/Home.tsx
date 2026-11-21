@@ -8,7 +8,7 @@ export function Home() {
   const { content, progress } = useGame();
   return (
     <Screen title="" help="home">
-      <div class="logo" aria-label={APP_NAME}>
+      <div class="logo" role="heading" aria-level={1} aria-label={APP_NAME}>
         {APP_NAME.split(' ').map((w) => <span key={w}>{w}</span>)}
       </div>
       <p class="tagline">Школьная викторина в формате хоккейного матча</p>
