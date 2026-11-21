@@ -40,6 +40,11 @@ create policy family_select_own on family_members for select to authenticated
 
 -- invites: политик нет, прямого доступа нет
 
+-- Права таблиц явно: новые проекты Supabase могут не выдавать их автоматически. Строки по-прежнему режет RLS.
+grant select, insert on events to authenticated;
+grant select on family_members to authenticated;
+revoke all on invites from anon, authenticated;
+
 create or replace function join_family(p_code text, p_pin text default null)
 returns text
 language plpgsql
