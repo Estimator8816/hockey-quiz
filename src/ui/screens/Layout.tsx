@@ -3,11 +3,14 @@ import { APP_NAME } from '../../config';
 import { HelpButton } from '../HelpButton';
 import type { ScreenId } from '../hints';
 
-export function Screen(props: { title?: string; back?: string; help?: ScreenId; children?: ComponentChildren }) {
+export function Screen(props: {
+  title?: string; back?: string; onBack?: () => void; help?: ScreenId; children?: ComponentChildren;
+}) {
   return (
     <main class="screen">
       <header class="top">
-        {props.back ? <a class="back" href={props.back} aria-label="Назад"></a> : <span class="back-gap" />}
+        {props.back ? <a class="back" href={props.back} aria-label="Назад"
+          onClick={props.onBack ? (e) => { e.preventDefault(); props.onBack!(); } : undefined}></a> : <span class="back-gap" />}
         {props.title === '' ? <span class="ttl" /> : <h1 class="ttl">{props.title ?? APP_NAME}</h1>}
         {props.help ? <HelpButton screen={props.help} /> : <span class="back-gap" />}
       </header>

@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'preact/hooks';
 import type { Level, Question, SubjectId } from '../../content/types';
-import { PLAYER_TEAM } from '../../config';
+import { HIDDEN_LEFT_MS, PLAYER_TEAM } from '../../config';
 import {
   answer, concededLeft, createMatch, currentItem, type MatchItem, type MatchState, type Mode, type Outcome,
 } from '../../engine/match';
@@ -62,6 +62,9 @@ export function Match(props: {
   const [state, setState] = useState<MatchState | null>(init?.state ?? null);
   const [fb, setFb] = useState<Feedback | null>(null);
   const [, setTick] = useState(0);
+  const [confirmLeave, setConfirmLeave] = useState(false);
+  const hiddenAt = useRef<number | null>(null);
+  const abandoned = useRef(false);
   const shownAt = useRef(Date.now());
   const ref = useRef<{ state: MatchState | null; fb: Feedback | null }>({ state, fb });
 
@@ -105,18 +108,43 @@ export function Match(props: {
     const item = currentItem(ref.current.state);
     if (!item) return;
     const id = setInterval(() => {
+      if (hiddenAt.current !== null) return; // экран скрыт: таймер на паузе
       if (Date.now() - shownAt.current >= item.timerSec * 1000) resolveRef.current('timeout', null);
       else setTick((t) => t + 1);
     }, 200);
     return () => clearInterval(id);
   }, [idx, fb]);
 
+  // Выход из начатого матча = пропущенный гол (как «ушёл со льда»), один раз.
+  const leave = () => {
+    if (abandoned.current) return;
+    const cur = ref.current;
+    if (!init || !cur.state || cur.state.over || training) return;
+    abandoned.current = true;
+    if (cur.fb) ref.current = { state: cur.state, fb: null }; // следующий вопрос засчитываем как пропущенный
+    resolveRef.current('left', null);
+  };
+  const leaveRef = useRef(leave);
+  leaveRef.current = leave;
+  useEffect(() => () => leaveRef.current(), []);
+
   useEffect(() => {
+    let timer: ReturnType<typeof setTimeout> | undefined;
     const on = () => {
-      if (document.visibilityState === 'hidden') resolveRef.current('left', null);
+      if (document.visibilityState === 'hidden') {
+        if (hiddenAt.current !== null) return;
+        hiddenAt.current = Date.now();
+        timer = setTimeout(() => { hiddenAt.current = null; resolveRef.current('left', null); }, HIDDEN_LEFT_MS);
+      } else if (hiddenAt.current !== null) {
+        clearTimeout(timer);
+        const gone = Date.now() - hiddenAt.current;
+        hiddenAt.current = null;
+        if (gone >= HIDDEN_LEFT_MS) resolveRef.current('left', null);
+        else shownAt.current += gone; // короткое скрытие (автоблокировка): время вопроса не уходит
+      }
     };
     document.addEventListener('visibilitychange', on);
-    return () => document.removeEventListener('visibilitychange', on);
+    return () => { clearTimeout(timer); document.removeEventListener('visibilitychange', on); };
   }, []);
 
   if (!valid) return <Screen title="Не найдено" back="#/" />;
@@ -159,7 +187,15 @@ export function Match(props: {
   };
 
   return (
-    <Screen title={opp} back={backTo} help={fb ? 'match' : undefined}>
+    <Screen title={opp} back={backTo} help={fb ? 'match' : undefined}
+      onBack={!training && !state.over ? () => setConfirmLeave(true) : undefined}>
+      {confirmLeave && (
+        <div class="feedback" role="alertdialog" aria-label="Покинуть матч?">
+          <p class="msg">Покинуть матч? Будет засчитан пропущенный гол.</p>
+          <button class="big" onClick={() => { leave(); navigate(backTo); }}>Покинуть матч</button>
+          <button class="flag" onClick={() => setConfirmLeave(false)}>Остаться</button>
+        </div>
+      )}
       <section class="board" aria-label="Табло">
         <div class="teams"><span>{PLAYER_TEAM}</span><span>{opp}</span></div>
         <div class="score" data-testid="score">{state.goalsFor} : {state.goalsAgainst}</div>

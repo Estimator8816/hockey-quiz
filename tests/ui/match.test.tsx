@@ -2,6 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { act, cleanup, fireEvent, screen } from '@testing-library/preact';
 import { createLocalStore } from '../../src/storage/store';
 import { newEvent, type AnswerEvent, type MatchEndEvent } from '../../src/engine/events';
+import { HIDDEN_LEFT_MS } from '../../src/config';
 import { memStorage, mount } from './fixtures';
 
 beforeEach(() => { vi.useFakeTimers(); });
@@ -23,15 +24,49 @@ describe('экран матча', () => {
     expect(screen.getByText('Пропустил…')).toBeTruthy();
   });
 
-  it('hiddenTabConcedesAsLeft', async () => {
-    const { store } = mount('#/play/regular/math/math-01/1');
-    Object.defineProperty(document, 'visibilityState', { value: 'hidden', configurable: true });
+  const setVis = async (v: 'hidden' | 'visible') => {
+    Object.defineProperty(document, 'visibilityState', { value: v, configurable: true });
     await act(() => { document.dispatchEvent(new Event('visibilitychange')); });
-    Object.defineProperty(document, 'visibilityState', { value: 'visible', configurable: true });
+  };
+
+  it('longHiddenTabConcedesAsLeft', async () => {
+    const { store } = mount('#/play/regular/math/math-01/1');
+    await setVis('hidden');
+    await act(() => { vi.advanceTimersByTime(HIDDEN_LEFT_MS + 1000); });
+    await setVis('visible');
     const answers = store.all().filter((e): e is AnswerEvent => e.kind === 'answer');
     expect(answers).toHaveLength(1);
     expect(answers[0].outcome).toBe('left');
     expect(screen.getByTestId('score').textContent).toBe('0 : 1');
+  });
+
+  it('shortHiddenTabPausesTimerNoGoal', async () => {
+    const { store } = mount('#/play/regular/math/math-01/1');
+    await act(() => { vi.advanceTimersByTime(5_000); });
+    await setVis('hidden');
+    await act(() => { vi.advanceTimersByTime(60_000); }); // дольше таймера вопроса, но короче порога
+    await setVis('visible');
+    expect(store.all().filter((e) => e.kind === 'answer')).toHaveLength(0);
+    expect(screen.getByTestId('score').textContent).toBe('0 : 0');
+    await act(() => { vi.advanceTimersByTime(10_000); }); // 5 + 10 = 15 с из 20: ещё идёт
+    expect(store.all().filter((e) => e.kind === 'answer')).toHaveLength(0);
+    await act(() => { vi.advanceTimersByTime(6_000); }); // 21 с: время вышло
+    expect(store.all().filter((e): e is AnswerEvent => e.kind === 'answer')[0].outcome).toBe('timeout');
+  });
+
+  it('backDuringQuestionAsksThenConcedesGoal', async () => {
+    const { store } = mount('#/play/regular/math/math-01/1');
+    await act(() => { fireEvent.click(screen.getByLabelText('Назад')); });
+    expect(screen.getByText(/Покинуть матч\?/)).toBeTruthy();
+    expect(store.all().filter((e) => e.kind === 'answer')).toHaveLength(0);
+    await act(() => { fireEvent.click(screen.getByText('Остаться')); });
+    expect(screen.queryByText(/Покинуть матч\?/)).toBeNull();
+    await act(() => { fireEvent.click(screen.getByLabelText('Назад')); });
+    await act(() => { fireEvent.click(screen.getByRole('button', { name: 'Покинуть матч' })); });
+    await act(() => { vi.advanceTimersByTime(100); });
+    const answers = store.all().filter((e): e is AnswerEvent => e.kind === 'answer');
+    expect(answers).toHaveLength(1);
+    expect(answers[0].outcome).toBe('left');
   });
 
   it('wrongAnswerShowsCorrectAndWhy', async () => {

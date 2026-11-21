@@ -5,3 +5,5 @@ export const SUPABASE_URL = '';
 export const SUPABASE_ANON_KEY = '';
 /** Второй режим «Матч с родителями» — пока скрыт. */
 export const FEATURE_DUEL = false;
+/** Экран скрыт дольше этого времени (мс) — засчитывается «ушёл со льда». Короче — таймер просто на паузе. */
+export const HIDDEN_LEFT_MS = 3 * 60 * 1000;
