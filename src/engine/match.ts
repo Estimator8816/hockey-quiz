@@ -70,7 +70,8 @@ export function createMatch(p: {
   return withAttackNo({
     mode: p.mode, subject: p.subject, topicId: p.topicId, level: p.level,
     goalsFor: 0, goalsAgainst: 0, bullitGoal: false, over: items.length === 0,
-    won: items.length === 0 ? true : null, items, index: 0, played: 0,
+    won: items.length === 0 ? false : null, // пустой матч — не победа
+    items, index: 0, played: 0,
   });
 }
 

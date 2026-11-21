@@ -57,13 +57,40 @@ describe('match engine', () => {
   });
 
   it('timeoutAndLeftCountAsConceded', () => {
-    let s = start('regular');
-    s = answer(s, 'timeout');
-    expect(s.goalsAgainst).toBe(1);
-    s = answer(s, 'left');
-    expect(s.goalsAgainst).toBe(2);
+    for (const [first, second] of [['timeout', 'left'], ['left', 'timeout']] as const) {
+      const { s } = play(start('regular'), [first, second]);
+      expect(s.goalsAgainst).toBe(2);
+      expect(s.over).toBe(true);
+      expect(s.won).toBe(false);
+    }
+    const { s: one } = play(start('regular'), ['timeout']);
+    expect(one.goalsAgainst).toBe(1);
+    expect(one.won).toBe(true);
+  });
+
+  it('emptyMatchIsNotAWin', () => {
+    const s = createMatch({ mode: 'regular', subject: 'math', topicId: null, level: null, questions: [], bullit, rng: seeded(1) });
     expect(s.over).toBe(true);
     expect(s.won).toBe(false);
+    expect(currentItem(s)).toBeNull();
+  });
+
+  it('lossBeforeBullitSkipsBullit', () => {
+    let seed = 1;
+    const bullitIdx = (sd: number) => {
+      let s = start('regular', sd);
+      let n = 0;
+      while (!currentItem(s)!.isBullit) { s = answer(s, 'correct'); n++; }
+      return n;
+    };
+    while (bullitIdx(seed) < 2) seed++;
+    let s = start('regular', seed);
+    s = answer(s, 'wrong');
+    s = answer(s, 'wrong');
+    expect(s.over).toBe(true);
+    expect(s.won).toBe(false);
+    expect(currentItem(s)).toBeNull();
+    expect(s.bullitGoal).toBe(false);
   });
 
   it('bullitWrongDoesNotConcede', () => {
