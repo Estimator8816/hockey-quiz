@@ -1,1 +1,491 @@
-[]
+[
+  {
+    "id": "math",
+    "title": "Математика",
+    "book": "Виленкин и др., Математика 5 класс, 2023 (ч. 1–2, базовый уровень)",
+    "topics": [
+      {
+        "id": "math-01",
+        "title": "Таблицы и цифры",
+        "paragraphs": "п. 1–2",
+        "released": true
+      },
+      {
+        "id": "math-02",
+        "title": "Отрезки, прямые и углы",
+        "paragraphs": "п. 3–4",
+        "released": true
+      },
+      {
+        "id": "math-03",
+        "title": "Шкалы и сравнение чисел",
+        "paragraphs": "п. 5–7",
+        "released": true
+      },
+      {
+        "id": "math-04",
+        "title": "Сложение и вычитание",
+        "paragraphs": "п. 8–9",
+        "released": true
+      },
+      {
+        "id": "math-05",
+        "title": "Выражения и уравнения",
+        "paragraphs": "п. 10–11",
+        "released": true
+      },
+      {
+        "id": "math-06",
+        "title": "Умножение и деление",
+        "paragraphs": "п. 12–13",
+        "released": false
+      },
+      {
+        "id": "math-07",
+        "title": "Деление с остатком",
+        "paragraphs": "п. 14",
+        "released": false
+      },
+      {
+        "id": "math-08",
+        "title": "Порядок действий",
+        "paragraphs": "п. 15–16",
+        "released": false
+      },
+      {
+        "id": "math-09",
+        "title": "Степень числа",
+        "paragraphs": "п. 17",
+        "released": false
+      },
+      {
+        "id": "math-10",
+        "title": "Делители и кратные",
+        "paragraphs": "п. 18–19",
+        "released": false
+      },
+      {
+        "id": "math-11",
+        "title": "Формулы и площадь",
+        "paragraphs": "п. 20–22",
+        "released": false
+      },
+      {
+        "id": "math-12",
+        "title": "Параллелепипед и объём",
+        "paragraphs": "п. 23–24",
+        "released": false
+      },
+      {
+        "id": "math-13",
+        "title": "Окружность, круг, шар",
+        "paragraphs": "п. 25",
+        "released": false
+      },
+      {
+        "id": "math-14",
+        "title": "Доли и обыкновенные дроби",
+        "paragraphs": "п. 26–28",
+        "released": false
+      },
+      {
+        "id": "math-15",
+        "title": "Дроби: сложение и вычитание",
+        "paragraphs": "п. 29–30",
+        "released": false
+      },
+      {
+        "id": "math-16",
+        "title": "Смешанные числа",
+        "paragraphs": "п. 31–32",
+        "released": false
+      },
+      {
+        "id": "math-17",
+        "title": "Сокращение дробей",
+        "paragraphs": "п. 33–35",
+        "released": false
+      },
+      {
+        "id": "math-18",
+        "title": "Дроби с разными знаменателями",
+        "paragraphs": "п. 36",
+        "released": false
+      },
+      {
+        "id": "math-19",
+        "title": "Умножение дробей",
+        "paragraphs": "п. 37–38",
+        "released": false
+      },
+      {
+        "id": "math-20",
+        "title": "Деление дробей",
+        "paragraphs": "п. 39–40",
+        "released": false
+      },
+      {
+        "id": "math-21",
+        "title": "Десятичные дроби",
+        "paragraphs": "п. 41–42",
+        "released": false
+      },
+      {
+        "id": "math-22",
+        "title": "Сложение десятичных, округление",
+        "paragraphs": "п. 43–44",
+        "released": false
+      },
+      {
+        "id": "math-23",
+        "title": "Десятичная дробь на число",
+        "paragraphs": "п. 45–46",
+        "released": false
+      },
+      {
+        "id": "math-24",
+        "title": "Действия с десятичными дробями",
+        "paragraphs": "п. 47–48",
+        "released": false
+      },
+      {
+        "id": "math-25",
+        "title": "Калькулятор",
+        "paragraphs": "п. 49",
+        "released": false
+      },
+      {
+        "id": "math-26",
+        "title": "Углы и транспортир",
+        "paragraphs": "п. 50–51",
+        "released": false
+      }
+    ]
+  },
+  {
+    "id": "russian",
+    "title": "Русский язык",
+    "book": "Ладыженская и др., Русский язык 5 класс, 2023+ (ч. 1–2)",
+    "topics": [
+      {
+        "id": "russian-01",
+        "title": "Богатство русского языка",
+        "paragraphs": "§ 1–2",
+        "released": true
+      },
+      {
+        "id": "russian-02",
+        "title": "Звуки и буквы",
+        "paragraphs": "§ 3–4",
+        "released": true
+      },
+      {
+        "id": "russian-03",
+        "title": "Части речи: вспоминаем",
+        "paragraphs": "§ 5–9",
+        "released": true
+      },
+      {
+        "id": "russian-04",
+        "title": "Предложение и знаки препинания",
+        "paragraphs": "§ 10–11",
+        "released": true
+      },
+      {
+        "id": "russian-05",
+        "title": "Язык, речь, диалог",
+        "paragraphs": "§ 12–16",
+        "released": true
+      },
+      {
+        "id": "russian-06",
+        "title": "Читаем и слушаем",
+        "paragraphs": "§ 17–18",
+        "released": false
+      },
+      {
+        "id": "russian-07",
+        "title": "Текст: тема, мысль, абзац",
+        "paragraphs": "§ 19–23",
+        "released": false
+      },
+      {
+        "id": "russian-08",
+        "title": "Рассказ, описание, рассуждение",
+        "paragraphs": "§ 24–29",
+        "released": false
+      },
+      {
+        "id": "russian-09",
+        "title": "Стили речи",
+        "paragraphs": "§ 30–31",
+        "released": false
+      },
+      {
+        "id": "russian-10",
+        "title": "Гласные и согласные звуки",
+        "paragraphs": "§ 32–37",
+        "released": false
+      },
+      {
+        "id": "russian-11",
+        "title": "Алфавит, ударение, разбор слова",
+        "paragraphs": "§ 38–44",
+        "released": false
+      },
+      {
+        "id": "russian-12",
+        "title": "Орфография, Ъ и Ь",
+        "paragraphs": "§ 45–47",
+        "released": false
+      },
+      {
+        "id": "russian-13",
+        "title": "Значение слова, омонимы",
+        "paragraphs": "§ 48–51",
+        "released": false
+      },
+      {
+        "id": "russian-14",
+        "title": "Синонимы, антонимы, словари",
+        "paragraphs": "§ 52–57",
+        "released": false
+      },
+      {
+        "id": "russian-15",
+        "title": "Состав слова",
+        "paragraphs": "§ 58–64",
+        "released": false
+      },
+      {
+        "id": "russian-16",
+        "title": "Чередование и разбор по составу",
+        "paragraphs": "§ 65–68",
+        "released": false
+      },
+      {
+        "id": "russian-17",
+        "title": "Правописание корней",
+        "paragraphs": "§ 69–72",
+        "released": false
+      },
+      {
+        "id": "russian-18",
+        "title": "Правописание приставок",
+        "paragraphs": "§ 73–76",
+        "released": false
+      },
+      {
+        "id": "russian-19",
+        "title": "Существительное: виды и род",
+        "paragraphs": "§ 77–83",
+        "released": false
+      },
+      {
+        "id": "russian-20",
+        "title": "Склонение и падежи",
+        "paragraphs": "§ 84–89",
+        "released": false
+      },
+      {
+        "id": "russian-21",
+        "title": "Особые существительные",
+        "paragraphs": "§ 90–94",
+        "released": false
+      },
+      {
+        "id": "russian-22",
+        "title": "НЕ и суффиксы существительных",
+        "paragraphs": "§ 95–103",
+        "released": false
+      },
+      {
+        "id": "russian-23",
+        "title": "Имя прилагательное",
+        "paragraphs": "§ 104–110",
+        "released": false
+      },
+      {
+        "id": "russian-24",
+        "title": "Глагол: НЕ, вид, -ТСЯ",
+        "paragraphs": "§ 111–117",
+        "released": false
+      },
+      {
+        "id": "russian-25",
+        "title": "Времена и спряжение глагола",
+        "paragraphs": "§ 118–127",
+        "released": false
+      },
+      {
+        "id": "russian-26",
+        "title": "Синтаксис и словосочетание",
+        "paragraphs": "§ 128–132",
+        "released": false
+      },
+      {
+        "id": "russian-27",
+        "title": "Предложение и его члены",
+        "paragraphs": "§ 133–143",
+        "released": false
+      },
+      {
+        "id": "russian-28",
+        "title": "Однородные члены и сложные предложения",
+        "paragraphs": "§ 144–151",
+        "released": false
+      }
+    ]
+  },
+  {
+    "id": "history",
+    "title": "История",
+    "book": "Мединский, Чубарьян, История Древнего мира 5 класс, 2025",
+    "topics": [
+      {
+        "id": "history-01",
+        "title": "Первые люди",
+        "paragraphs": "§ 1–2",
+        "released": true
+      },
+      {
+        "id": "history-02",
+        "title": "Верования и земледелие",
+        "paragraphs": "§ 3–4",
+        "released": true
+      },
+      {
+        "id": "history-03",
+        "title": "Египет: государство и общество",
+        "paragraphs": "§ 5–7",
+        "released": true
+      },
+      {
+        "id": "history-04",
+        "title": "Египет: расцвет, вера, наука",
+        "paragraphs": "§ 8–10",
+        "released": true
+      },
+      {
+        "id": "history-05",
+        "title": "Междуречье и Вавилон",
+        "paragraphs": "§ 11–12",
+        "released": true
+      },
+      {
+        "id": "history-06",
+        "title": "Финикия и Палестина",
+        "paragraphs": "§ 13–14",
+        "released": false
+      },
+      {
+        "id": "history-07",
+        "title": "Ассирия и Персия",
+        "paragraphs": "§ 15–16",
+        "released": false
+      },
+      {
+        "id": "history-08",
+        "title": "Древняя Индия и Китай",
+        "paragraphs": "§ 17–19",
+        "released": false
+      },
+      {
+        "id": "history-09",
+        "title": "Начало Греции и поэмы Гомера",
+        "paragraphs": "§ 20–22",
+        "released": false
+      },
+      {
+        "id": "history-10",
+        "title": "Полисы и колонизация",
+        "paragraphs": "§ 23–25",
+        "released": false
+      },
+      {
+        "id": "history-11",
+        "title": "Афины и Спарта",
+        "paragraphs": "§ 26–27",
+        "released": false
+      },
+      {
+        "id": "history-12",
+        "title": "Войны с Персией и демократия",
+        "paragraphs": "§ 28–29",
+        "released": false
+      },
+      {
+        "id": "history-13",
+        "title": "Культура и быт греков",
+        "paragraphs": "§ 30–31",
+        "released": false
+      },
+      {
+        "id": "history-14",
+        "title": "Наука и театр Греции",
+        "paragraphs": "§ 32–33",
+        "released": false
+      },
+      {
+        "id": "history-15",
+        "title": "Олимпийские игры",
+        "paragraphs": "§ 34",
+        "released": false
+      },
+      {
+        "id": "history-16",
+        "title": "Македония и Александр",
+        "paragraphs": "§ 35–37",
+        "released": false
+      },
+      {
+        "id": "history-17",
+        "title": "Начало Рима и республика",
+        "paragraphs": "§ 38–40",
+        "released": false
+      },
+      {
+        "id": "history-18",
+        "title": "Нравы Рима и завоевание Италии",
+        "paragraphs": "§ 41–42",
+        "released": false
+      },
+      {
+        "id": "history-19",
+        "title": "Пунические войны",
+        "paragraphs": "§ 43–44",
+        "released": false
+      },
+      {
+        "id": "history-20",
+        "title": "Гражданские войны и рабство",
+        "paragraphs": "§ 45–47",
+        "released": false
+      },
+      {
+        "id": "history-21",
+        "title": "Римская империя",
+        "paragraphs": "§ 48–50",
+        "released": false
+      },
+      {
+        "id": "history-22",
+        "title": "Возникновение христианства",
+        "paragraphs": "§ 51",
+        "released": false
+      },
+      {
+        "id": "history-23",
+        "title": "Наука и культура Рима",
+        "paragraphs": "§ 52–53",
+        "released": false
+      },
+      {
+        "id": "history-24",
+        "title": "Быт Рима и поздняя империя",
+        "paragraphs": "§ 54–55",
+        "released": false
+      }
+    ]
+  }
+]
