@@ -1,4 +1,4 @@
-export const APP_NAME = 'Хоккейная викторина';
+export const APP_NAME = 'Контрольный период';
 export const PLAYER_TEAM = 'Данила';
 export const BASE = '/hockey-quiz/';
 export const SUPABASE_URL = '';
