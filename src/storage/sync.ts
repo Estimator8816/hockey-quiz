@@ -2,6 +2,8 @@ import type { SupabaseClient } from '@supabase/supabase-js';
 import type { GameEvent } from '../engine/events';
 import type { EventStore } from './store';
 
+const PAGE = 1000;
+
 export async function syncNow(
   store: EventStore,
   client: SupabaseClient,
@@ -21,16 +23,21 @@ export async function syncNow(
   } catch {
     /* офлайн: pending остаётся */
   }
+  const fetched: GameEvent[] = [];
   try {
-    const { data, error } = await client.from('events').select('*').order('ts');
-    if (!error && data) {
-      const before = store.all().length;
-      store.merge(data.map((r: { body: unknown }) => r.body as GameEvent));
-      pulled = store.all().length - before;
+    for (let from = 0; ; from += PAGE) {
+      const { data, error } = await client
+        .from('events').select('*').order('ts').order('id').range(from, from + PAGE - 1);
+      if (error || !data) break;
+      for (const r of data as { body: unknown }[]) fetched.push(r.body as GameEvent);
+      if (data.length < PAGE) break;
     }
   } catch {
-    /* офлайн */
+    /* офлайн: сливаем, что успели скачать */
   }
+  const before = store.all().length;
+  store.merge(fetched);
+  pulled = store.all().length - before;
   return { pushed, pulled };
 }
 

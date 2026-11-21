@@ -28,7 +28,7 @@ alter table events enable row level security;
 
 drop policy if exists events_insert_child on events;
 create policy events_insert_child on events for insert to authenticated
-  with check (exists (select 1 from family_members m where m.user_id = auth.uid() and m.role = 'child'));
+  with check (user_id = auth.uid() and exists (select 1 from family_members m where m.user_id = auth.uid() and m.role = 'child'));
 
 drop policy if exists events_select_family on events;
 create policy events_select_family on events for select to authenticated
@@ -44,7 +44,7 @@ create or replace function join_family(p_code text, p_pin text default null)
 returns text
 language plpgsql
 security definer
-set search_path = public, extensions
+set search_path = public, extensions, pg_temp
 as $$
 declare
   inv invites%rowtype;
