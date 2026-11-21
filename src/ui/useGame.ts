@@ -37,10 +37,18 @@ export function GameProvider(props: {
     if (!client) return;
     let stop: (() => void) | undefined;
     let dead = false;
-    ensureSession(client)
-      .then(() => { if (!dead) stop = startAutoSync(store, client); })
-      .catch(() => { /* офлайн: игра работает без сети */ });
-    return () => { dead = true; stop?.(); };
+    const start = () => {
+      ensureSession(client)
+        .then(() => {
+          if (dead || stop) return;
+          globalThis.removeEventListener?.('online', start);
+          stop = startAutoSync(store, client);
+        })
+        .catch(() => { /* офлайн: игра работает без сети, ждём появления сети */ });
+    };
+    globalThis.addEventListener?.('online', start);
+    start();
+    return () => { dead = true; globalThis.removeEventListener?.('online', start); stop?.(); };
   }, [store, client]);
 
   const progress = useMemo(

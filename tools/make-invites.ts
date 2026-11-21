@@ -31,4 +31,4 @@ for (const i of invites) {
   console.log(`insert into invites (code, role, name, pin_hash) values (${q(i.code)}, ${q(i.role)}, ${q(i.name)}, ${hash});`);
 }
 console.log('\n-- Ссылки (сохранить в docs/ссылки.md):');
-for (const i of invites) console.log(`${i.name}: https://${user}.github.io/hockey-quiz/#/join/${i.code}`);
+for (const i of invites) console.log(`${i.name}: https://${user}.github.io/hockey-quiz/#/${i.role === 'parent' ? 'parent/join' : 'join'}/${i.code}`);
